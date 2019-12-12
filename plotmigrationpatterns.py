@@ -138,12 +138,35 @@ historgramFromFist(data_list, data_labels)
 
 
 # tuto: https://plot.ly/python/histograms/
-fig = go.Figure()
-fig.add_trace(go.Histogram(x=distances_k0))
-fig.add_trace(go.Histogram(x=distances_k))
-fig.add_trace(go.Histogram(x=distances))
-fig.update_layout(barmode='overlay')
-fig.update_layout(title=go.layout.Title(text="Distribution overlay"))
-fig.show()
+fig1 = go.Figure()
+fig1.add_trace(go.Histogram(x=distances_k0))
+fig1.add_trace(go.Histogram(x=distances_k))
+fig1.add_trace(go.Histogram(x=distances))
+fig1.update_layout(barmode='overlay')
+fig1.update_layout(title=go.layout.Title(text="Over lay of distributions"))
+fig1.show()
+
+
+fig2 = go.Figure()
+for cell in range(100,200):
+    fig2.add_trace(go.Scatter(
+        x=myCells[cell].x[1:20]-myCells[cell].x[0],
+        y=myCells[cell].y[1:20]-myCells[cell].y[0],
+        name="cell {} ".format(cell)
+        ))
+
+fig2.update_layout(
+    title="Cells random migration",
+    xaxis_title="migration along the x in µm",
+    yaxis_title="migration along the y in µm",
+    font=dict(
+            family="Courier New, monospace",
+            size=18,
+            color="#7f7f7f"
+            )
+)
+
+fig2.show()
+
 
 
