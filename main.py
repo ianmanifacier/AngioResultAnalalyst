@@ -3,6 +3,7 @@
 
 # external library imports
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import numpy as np
 import os
 
@@ -82,39 +83,61 @@ fig1.add_trace(go.Histogram(x=distances_k))
 fig1.add_trace(go.Histogram(x=distances))
 fig1.update_layout(barmode='overlay')
 fig1.update_layout(title=go.layout.Title(text="Over lay of distributions"))
+fig1.update_xaxes(range=[0, 150])
+fig1.update_yaxes(range=[0, 500])
 fig1.show()
 
+print(type(fig1))
 
-fig2 = go.Figure()
-for cell in myCells:
+fig2 = make_subplots(rows=1, cols=3)
+
+#fig2 = go.Figure()
+for cell in range(1,300): #myCells:
     if round(myCells[cell].K_stiffness_edge) == 0 and round(myCells[cell].K_stiffness_central) == 4:
         nbSteps = myCells[cell].nbSteps
         fig2.add_trace(go.Scatter(
             x=myCells[cell].x[0:nbSteps+1]-myCells[cell].x[0],
             y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
-            name="cell {} ".format(cell), line_color='rgba(120,30,30,.2)'
-            ))
+            #name="cell {} ".format(cell),
+            line_color='rgba(120,30,30,.2)'),
+            row=1,
+            col=1)
     elif round(myCells[cell].K_stiffness_edge) == 4 and round(myCells[cell].K_stiffness_central) == 4 :  
         nbSteps = myCells[cell].nbSteps
         fig2.add_trace(go.Scatter(
             x=myCells[cell].x[0:nbSteps+1]-myCells[cell].x[0],
             y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
-            name="cell {} ".format(cell), line_color='rgba(30,100,30,.2)'
-            ))
-
- 
+            #name="cell {} ".format(cell),
+            line_color='rgba(30,100,30,.2)'),
+            row=1,
+            col=2)
+    else:
+        nbSteps = myCells[cell].nbSteps
+        fig2.add_trace(go.Scatter(
+            x=myCells[cell].x[0:nbSteps+1]-myCells[cell].x[0],
+            y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
+            #name="cell {} ".format(cell),
+            line_color='rgba(100,100,100,.2)'),
+            row=1,
+            col=3)
     
+# We format the figure    
 fig2.update_layout(
+    title_text="Subplots",
     title="Cells random migration",
     xaxis_title="migration along the x in µm",
     yaxis_title="migration along the y in µm",
+    height=600, # height of the plot
+    width=1800, # The number here is the width of the plot (sum of the widths of all subplots), we thus multiply by the number of columns by the width of a single subplot (3*600)
     font=dict(
             family="Courier New, monospace",
             size=18,
-            color="#7f7f7f"
-            )
-)
+            color="#7f7f7f")
+    )
+fig2.update_xaxes(range=[-150, 150])
+fig2.update_yaxes(range=[-150, 150])
 
 fig2.show()
+
 
 print(len(myCells))
