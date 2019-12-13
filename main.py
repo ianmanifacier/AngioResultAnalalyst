@@ -11,7 +11,7 @@ import os
 from result_reader import plotmigrationpatterns as myplt
 
 filename = os.path.join(os.getcwd(),'..\\results.csv')
-print(filename)
+print("uploading file: {}".format(filename))
 myCells = myplt.load_results(filename)
 
 
@@ -72,7 +72,7 @@ for cell in myCells:
 
 """ Distances ( k_edge=0 || k_edge!=0 || ALL ) """
 data_list = [distances_k0, distances_k, distances]
-data_labels = ["K_edge is null " , "K edge is non null" , " ALL "]
+data_labels = ["K edge is null" , "K edge is non null", "all conditions"]
 myplt.historgramFromFist(data_list, data_labels)
 
 
@@ -87,37 +87,43 @@ fig1.update_xaxes(range=[0, 150])
 fig1.update_yaxes(range=[0, 500])
 fig1.show()
 
-print(type(fig1))
-
 fig2 = make_subplots(rows=1, cols=3)
 
+k0  = 0
+kk1 = 0
+kk5 = 0
+
+
 #fig2 = go.Figure()
-for cell in range(1,300): #myCells:
-    if round(myCells[cell].K_stiffness_edge) == 0 and round(myCells[cell].K_stiffness_central) == 4:
+for cell in myCells:
+    if round(myCells[cell].K_stiffness_edge) == 0 and round(myCells[cell].K_stiffness_central) == 1:
+        k0 += 1
         nbSteps = myCells[cell].nbSteps
         fig2.add_trace(go.Scatter(
             x=myCells[cell].x[0:nbSteps+1]-myCells[cell].x[0],
             y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
-            #name="cell {} ".format(cell),
+            name="cell {} ".format(cell),
             line_color='rgba(120,30,30,.2)'),
             row=1,
             col=1)
-    elif round(myCells[cell].K_stiffness_edge) == 4 and round(myCells[cell].K_stiffness_central) == 4 :  
+    elif round(myCells[cell].K_stiffness_edge) == 1 and round(myCells[cell].K_stiffness_central) == 1:  
+        kk1 += 1
         nbSteps = myCells[cell].nbSteps
         fig2.add_trace(go.Scatter(
             x=myCells[cell].x[0:nbSteps+1]-myCells[cell].x[0],
             y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
-            #name="cell {} ".format(cell),
+            name="cell {} ".format(cell),
             line_color='rgba(30,100,30,.2)'),
             row=1,
             col=2)
-    else:
+    elif round(myCells[cell].K_stiffness_edge) == 5 and round(myCells[cell].K_stiffness_central) == 5:
+        kk5 += 1
         nbSteps = myCells[cell].nbSteps
         fig2.add_trace(go.Scatter(
             x=myCells[cell].x[0:nbSteps+1]-myCells[cell].x[0],
             y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
-            #name="cell {} ".format(cell),
-            line_color='rgba(100,100,100,.2)'),
+            name="cell {} ".format(cell),
+            line_color='rgba(30,30,100,.2)'),
             row=1,
             col=3)
     
@@ -134,10 +140,11 @@ fig2.update_layout(
             size=18,
             color="#7f7f7f")
     )
-fig2.update_xaxes(range=[-150, 150])
-fig2.update_yaxes(range=[-150, 150])
+fig2.update_xaxes(title="in µm", range=[-150, 150])
+fig2.update_yaxes(title="in µm", range=[-150, 150])
+
+print(" k0  = {}".format(k0))
+print(" kk1 = {}".format(kk1))
+print(" kk5 = {}".format(kk5))
 
 fig2.show()
-
-
-print(len(myCells))
