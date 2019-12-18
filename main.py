@@ -116,7 +116,7 @@ for cell in myCells:
             line_color='rgba(30,100,30,.2)'),
             row=1,
             col=2)
-    elif round(myCells[cell].K_stiffness_edge) == 5 and round(myCells[cell].K_stiffness_central) == 5:
+    elif round(myCells[cell].K_stiffness_edge) == 10 and round(myCells[cell].K_stiffness_central) == 10:
         kk5 += 1
         nbSteps = myCells[cell].nbSteps
         fig2.add_trace(go.Scatter(
@@ -143,6 +143,7 @@ fig2.update_layout(
 fig2.update_xaxes(title="in µm", range=[-150, 150])
 fig2.update_yaxes(title="in µm", range=[-150, 150])
 
+print("Number of simulations : {}".format(len(myCells)))
 print(" k0  = {}".format(k0))
 print(" kk1 = {}".format(kk1))
 print(" kk5 = {}".format(kk5))
