@@ -7,6 +7,7 @@ import numpy as np
 import csv
 from math import sqrt
 from math import floor
+from math import acos
 
 class CellSimulationResult:
     """ CellSimulationResult is an object that contains all the results of a simulation
@@ -38,7 +39,15 @@ class CellSimulationResult:
         self.area[self.nbSteps] = area
     def nextStep(self):
         self.nbSteps += 1
-
+    def calculatesMigrationAngles(self):
+        theta = np.empty([self.nbSteps-2, ], dtype=float)
+        for i in range(1,self.nbSteps):
+            ux = self.x[i]-self.x[i-1]
+            uy = self.y[i]-self.y[i-1]
+            vx = self.x[i+1]-self.x[i]
+            vy = self.y[i+1]-self.y[i]
+            theta[i-1] = acos( (ux*vx +uy*uy)/( sqrt( (ux*ux+uy*uy) + (vx*vx+vy*vy) ) ))
+        return theta
 
 
 def historgram(x):
@@ -114,3 +123,17 @@ def assign_subplot_row(cols, nvalue):
 
 def assign_subplot_col(cols, nvalue):
     return nvalue % cols + 1
+
+###########################################################
+#### Mygration patern Analysis ####
+###########################################################
+
+# Analysis of angle distribution
+
+# is the distribution flat?
+
+# is the distribution gaussian (wrap arround gaussian)
+
+# is there a bias ?
+
+# is there persistance ?
