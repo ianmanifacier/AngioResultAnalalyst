@@ -10,7 +10,7 @@ import os
 # local library imports
 from result_reader import plotmigrationpatterns as myplt
 
-filename = os.path.join(os.getcwd(),'..\\results.csv')
+filename = os.path.join(os.getcwd(),'results.csv')
 print("uploading file: {}".format(filename))
 myCells = myplt.load_results(filename)
 
