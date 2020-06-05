@@ -17,12 +17,14 @@ class CellSimulationResult:
     """
     def __init__(self, simulationNumber):
         self.simulationNumber = simulationNumber
+        self.t = np.empty([10000, ], dtype=float)
+        self.x = np.empty([10000, ], dtype=float)
+        self.y = np.empty([10000, ], dtype=float)
+        self.label = "not defined"
+        self.labelRefNb = int()
+        self.area = np.empty([10000, ], dtype=float)
         self.K_stiffness_central = "not defined"
         self.K_stiffness_edge = "not defined"
-        self.t = np.empty([1000, ], dtype=float)
-        self.x = np.empty([1000, ], dtype=float)
-        self.y = np.empty([1000, ], dtype=float)
-        self.area = np.empty([1000, ], dtype=float)
         self.nbSteps = 0
         self.nbExtremities = "not defined"
     def distance(self):
@@ -72,6 +74,7 @@ def historgramFromFist(data_list, data_labels):
 ############################################################
 
 def load_results(filename = 'results.csv'):
+    my_subplot_titles = ["condition 1", "condition 2", "condition 3", "condition 4", "condition 5","condition 6"]
     with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -80,18 +83,17 @@ def load_results(filename = 'results.csv'):
             simKey = int(row[0]) # simulationNumber
             if simKey not in myCells:
                 myCells[simKey] = CellSimulationResult(simKey)
-                myCells[simKey].K_stiffness_central = float(row[1]) # K_stiffness_central
-                myCells[simKey].K_stiffness_edge = float(row[2]) # K_stiffness_edge
-                myCells[simKey].nbExtremities = int(row[7])
+                myCells[simKey].labelRefNb = int(row[4])  # label ref NB
+                myCells[simKey].label = str(row[5]) # label (string)
+                my_subplot_titles[myCells[simKey].labelRefNb] = myCells[simKey].label
             else:
                 myCells[simKey].nextStep()
-            myCells[simKey].append_t( float(row[3]) ) # t (time)
-            myCells[simKey].append_x( float(row[4]) ) # x
-            myCells[simKey].append_y( float(row[5]) ) # y
-            myCells[simKey].append_area( float(row[6]) ) # area
-
+            myCells[simKey].append_t( float(row[1]) ) # t (time)
+            myCells[simKey].append_x( float(row[2]) ) # x
+            myCells[simKey].append_y( float(row[3]) ) # y
             line_count += 1
-        return myCells
+        my_subplot_titles = tuple(my_subplot_titles)
+        return my_subplot_titles, myCells
 
 ##############################################################
 ################# Ploting tools ##############################

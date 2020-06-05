@@ -10,27 +10,32 @@ import os
 # local library imports
 from result_reader import plotmigrationpatterns as myplt
 
+
+# define subplot titles
+
+
+print(os.getcwd())
 filename = os.path.join(os.getcwd(),'results.csv')
 print("uploading file: {}".format(filename))
-myCells = myplt.load_results(filename)
+my_subplot_titles, myCells = myplt.load_results(filename)
 
 limxy = 100
 
-fig1 = make_subplots(rows=1, cols=3)
+fig1 = make_subplots(rows=1, cols=3, subplot_titles=my_subplot_titles)
 k0  = 0
 
 
 for cell in myCells:
         k0 += 1
         nbSteps = myCells[cell].nbSteps
-        print("coucou", myCells[cell].x[nbSteps+1]-myCells[cell].x[0])
+        print(myCells[cell].label)
         fig1.add_trace(go.Scatter(
             x=myCells[cell].x[nbSteps:nbSteps+1]-myCells[cell].x[0],
             y=myCells[cell].y[nbSteps:nbSteps+1]-myCells[cell].y[0],
             name="cell {} ".format(cell),
             line_color='rgba(120,30,30,.2)'),
             row=1,
-            col=1)
+            col=myCells[cell].labelRefNb)
 
 # We format the figure    
 fig1.update_layout(
@@ -49,14 +54,13 @@ fig1.update_xaxes(title="in µm", range=[-limxy, limxy])
 fig1.update_yaxes(title="in µm", range=[-limxy, limxy])
 
 print("Number of simulations : {}".format(len(myCells)))
-print(" k0  = {}".format(k0))
 fig1.show()
 
 
 
 """ Histogram representing distances """
 
-fig2 = make_subplots(rows=1, cols=3)
+fig2 = make_subplots(rows=1, cols=3, subplot_titles=my_subplot_titles)
 k0  = 0
 
 #fig2 = go.Figure()
@@ -69,7 +73,7 @@ for cell in myCells:
             name="cell {} ".format(cell),
             line_color='rgba(120,30,30,.2)'),
             row=1,
-            col=1)
+            col=myCells[cell].labelRefNb)
 
 # We format the figure    
 fig2.update_layout(
@@ -89,5 +93,4 @@ fig2.update_xaxes(title="in µm", range=[-limxy, limxy])
 fig2.update_yaxes(title="in µm", range=[-limxy, limxy])
 
 print("Number of simulations : {}".format(len(myCells)))
-print(" k0  = {}".format(k0))
 fig2.show()
