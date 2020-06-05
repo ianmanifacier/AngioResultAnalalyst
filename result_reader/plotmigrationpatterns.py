@@ -85,7 +85,7 @@ def load_results(filename = 'results.csv'):
                 myCells[simKey] = CellSimulationResult(simKey)
                 myCells[simKey].labelRefNb = int(row[4])  # label ref NB
                 myCells[simKey].label = str(row[5]) # label (string)
-                my_subplot_titles[myCells[simKey].labelRefNb] = myCells[simKey].label
+                my_subplot_titles[myCells[simKey].labelRefNb-1] = myCells[simKey].label
             else:
                 myCells[simKey].nextStep()
             myCells[simKey].append_t( float(row[1]) ) # t (time)

@@ -13,7 +13,6 @@ from result_reader import plotmigrationpatterns as myplt
 
 # define subplot titles
 
-
 print(os.getcwd())
 filename = os.path.join(os.getcwd(),'results.csv')
 print("uploading file: {}".format(filename))
@@ -59,7 +58,7 @@ fig1.show()
 
 
 """ Histogram representing distances """
-
+print(my_subplot_titles)
 fig2 = make_subplots(rows=1, cols=3, subplot_titles=my_subplot_titles)
 k0  = 0
 
