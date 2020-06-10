@@ -33,8 +33,8 @@ for cell in myCells:
             y=myCells[cell].y[nbSteps:nbSteps+1]-myCells[cell].y[0],
             name="cell {} ".format(cell),
             line_color='rgba(120,30,30,.2)'),
-            row=1,
-            col=myCells[cell].labelRefNb)
+            row=myCells[cell].labelRefNb % 3 +1,
+            col=myCells[cell].labelRefNb // 3 +1)
 
 # We format the figure    
 fig1.update_layout(
@@ -71,8 +71,8 @@ for cell in myCells:
             y=myCells[cell].y[0:nbSteps+1]-myCells[cell].y[0],
             name="cell {} ".format(cell),
             line_color='rgba(120,30,30,.2)'),
-            row=1,
-            col=myCells[cell].labelRefNb)
+            row=myCells[cell].labelRefNb % 3 + 1,
+            col=myCells[cell].labelRefNb // 3 + 1)
 
 # We format the figure    
 fig2.update_layout(
