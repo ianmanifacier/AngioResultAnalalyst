@@ -10,4 +10,3 @@ from math import floor
 
 # local library imports
 from result_reader import plotmigrationpatterns as myplt
-

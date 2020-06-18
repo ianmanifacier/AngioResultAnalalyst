@@ -16,29 +16,41 @@ class CellSimulationResult:
         - last step of the simulation
     """
     def __init__(self, simulationNumber):
-        self.simulationNumber = simulationNumber
-        self.t = np.empty([10000, ], dtype=float)
-        self.x = np.empty([10000, ], dtype=float)
-        self.y = np.empty([10000, ], dtype=float)
-        self.label = "not defined"
-        self.labelRefNb = int()
-        self.area = np.empty([10000, ], dtype=float)
-        self.K_stiffness_central = "not defined"
-        self.K_stiffness_edge = "not defined"
+        self.simulationNumber = simulationNumber #0
+        self.t = np.empty([0, ], dtype=float) #1
+        self.x = np.empty([0, ], dtype=float) #2
+        self.y = np.empty([0, ], dtype=float) #3
+        self.labelRefNb = int() #4
+        self.label = "not defined" #5
+        self.getNbNodes = np.empty([0, ], dtype=int) #6
+        self.countN1s = np.empty([0, ], dtype=int)  #7
+        self.countN2s = np.empty([0, ], dtype=int)  #8
+        self.getNbInteractions = np.empty([0, ], dtype=int)  #9
+        self.calculateTheLengthOfAllInteractions = np.empty([0, ], dtype=float) #10
+        self.calculateTheLengthOfAllB1s = np.empty([0, ], dtype=float) #11
+        self.calculateTheLengthOfAllB2s = np.empty([0, ], dtype=float) #12
+        self.totalNumberOfNodesDuringCellLifeTime = float() #13
+        self.nodeAge_mean = float() #14
+        self.nodeAgeAtDeath_mean = float() #15
+        self.nodeAgeAtDeath_maximum = float() #16
+        self.nbImmatureN1Transitions = int() #17
+        self.nbIntermediateN1Transitions = int() #18
+        self.nbMatureN1Transitions = int() #19
+        self.immatureN1TransitionPeriod_minimum = float() # 20
+        self.immatureN1TransitionPeriod_maximum  = float() # 21
+        self.immatureN1TransitionPeriod_mean  = float() # 22
+        self.intermediateN1TransitionPeriod_minimum = float() #23
+        self.intermediateN1TransitionPeriod_maximum = float() #24
+        self.intermediateN1TransitionPeriod_mean = float() #25
+        self.matureN1TransitionPeriod_minimum = float() #26
+        self.matureN1TransitionPeriod_maximum = float() #27
+        self.matureN1TransitionPeriod_mean = float() #28
         self.nbSteps = 0
         self.nbExtremities = "not defined"
     def distance(self):
         x = self.x
         y = self.y
         return sqrt( (x[0]-x[self.nbSteps])**2 + (y[0]-y[self.nbSteps])**2 )
-    def append_x(self, x):
-        self.x[self.nbSteps] = x
-    def append_y(self, y):
-        self.y[self.nbSteps] = y
-    def append_t(self, t):
-        self.t[self.nbSteps] = t
-    def append_area(self, area):
-        self.area[self.nbSteps] = area
     def nextStep(self):
         self.nbSteps += 1
     def calculatesMigrationAngles(self):
@@ -73,9 +85,9 @@ def historgramFromFist(data_list, data_labels):
 ################# The Script Starts Here ###################
 ############################################################
 
-def load_results(filename = 'results.csv'):
-    my_subplot_titles = ["condition 1", "condition 2", "condition 3", "condition 4", "condition 5","condition 6"]
-    with open(filename) as csv_file:
+def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
+    my_subplot_titles = []
+    with open(filename1) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         myCells =  dict() # this is the dictonnary that contains all the cell results
@@ -85,14 +97,86 @@ def load_results(filename = 'results.csv'):
                 myCells[simKey] = CellSimulationResult(simKey)
                 myCells[simKey].labelRefNb = int(row[4])  # label ref NB
                 myCells[simKey].label = str(row[5]) # label (string)
-                my_subplot_titles[myCells[simKey].labelRefNb-1] = myCells[simKey].label
+                #my_subplot_titles[myCells[simKey].labelRefNb-1] = myCells[simKey].label
             else:
                 myCells[simKey].nextStep()
-            myCells[simKey].append_t( float(row[1]) ) # t (time)
-            myCells[simKey].append_x( float(row[2]) ) # x
-            myCells[simKey].append_y( float(row[3]) ) # y
+            myCells[simKey].t = np.append( myCells[simKey].t, float(row[1]) ) # t (time)
+            myCells[simKey].x = np.append( myCells[simKey].x, float(row[2]) ) # x
+            myCells[simKey].y = np.append( myCells[simKey].y, float(row[3]) ) # y
+            myCells[simKey].getNbNodes = np.append( myCells[simKey].getNbNodes, int(row[6])) #6
+            myCells[simKey].countN1s = np.append( myCells[simKey].countN1s, int(row[7]))  #7
+            myCells[simKey].countN2s = np.append( myCells[simKey].countN2s, int(row[8]))  #8
+            myCells[simKey].getNbInteractions = np.append( myCells[simKey].getNbInteractions, int(row[9]))  #9
+            myCells[simKey].calculateTheLengthOfAllInteractions = np.append( myCells[simKey].calculateTheLengthOfAllInteractions, float(row[10])) #10
+            myCells[simKey].calculateTheLengthOfAllB1s = np.append( myCells[simKey].calculateTheLengthOfAllB1s, float(row[11])) #11
+            myCells[simKey].calculateTheLengthOfAllB2s = np.append( myCells[simKey].calculateTheLengthOfAllB2s, float(row[12])) #12
+            myCells[simKey].totalNumberOfNodesDuringCellLifeTime = float(row[13]) #13
+            myCells[simKey].nodeAge_mean = float(row[14]) #14
+            myCells[simKey].nodeAgeAtDeath_mean = float(row[15]) #15
+            myCells[simKey].nodeAgeAtDeath_maximum = float(row[16]) #16
+            myCells[simKey].nbImmatureN1Transitions = int(row[17]) #17
+            myCells[simKey].nbIntermediateN1Transitions = int(row[18]) #18
+            myCells[simKey].nbMatureN1Transitions = int(row[19]) #19
+            myCells[simKey].immatureN1TransitionPeriod_minimum = float(row[20]) # 20
+            myCells[simKey].immatureN1TransitionPeriod_maximum = float(row[21]) # 21
+            myCells[simKey].immatureN1TransitionPeriod_mean = float(row[22]) # 22
+            myCells[simKey].intermediateN1TransitionPeriod_minimum = float(row[23])#23
+            myCells[simKey].intermediateN1TransitionPeriod_maximum = float(row[24])#24
+            myCells[simKey].intermediateN1TransitionPeriod_mean = float(row[25])#25
+            myCells[simKey].matureN1TransitionPeriod_minimum = float(row[26])#26
+            myCells[simKey].matureN1TransitionPeriod_maximum = float(row[27])#27
+            myCells[simKey].matureN1TransitionPeriod_mean = float(row[28])#28
+
+            if myCells[simKey].label not in my_subplot_titles:
+                my_subplot_titles.append(myCells[simKey].label)
             line_count += 1
         my_subplot_titles = tuple(my_subplot_titles)
+    print('Up load Parameters')
+    with open(filename2) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count > 0:
+                simKey = int(row[2])
+                myCells[simKey].duration = float(row[0])
+                myCells[simKey].dt = float(row[1])
+                myCells[simKey].simulation_NB = int(row[2])
+                myCells[simKey].DN1i = float(row[3])
+                myCells[simKey].DN1m = float(row[4])
+                myCells[simKey].DN2 = float(row[5])
+                myCells[simKey].l1min = float(row[6])
+                myCells[simKey].l1max = float(row[7])
+                myCells[simKey].l2 = float(row[8])
+                myCells[simKey].l2eq = float(row[9])
+                myCells[simKey].k10 = float(row[10])
+                myCells[simKey].k1 = float(row[11])
+                myCells[simKey].k2 = float(row[12])
+                myCells[simKey].gamma1 = float(row[13])
+                myCells[simKey].B1_tension_only = bool(row[14])
+                myCells[simKey].B2_tension_only = bool(row[15])
+                myCells[simKey].B1_stretch_maturation_theshold = float(row[16])
+                myCells[simKey].alphasat = float(row[17])
+                myCells[simKey].alpha0 = float(row[18])
+                myCells[simKey].alpha10 = float(row[19])
+                myCells[simKey].alpha1i_constant_coefficient = float(row[20])
+                myCells[simKey].alpha1i_slope_coefficient = float(row[21])
+                myCells[simKey].alpha1m = float(row[22])
+                myCells[simKey].alpha2 = float(row[23])
+                myCells[simKey].delta = float(row[24])
+                myCells[simKey].ruptureForce_N0 = float(row[25])
+                myCells[simKey].ruptureForce_N1 = float(row[26])
+                myCells[simKey].ruptureForce_N2 = float(row[27])
+                myCells[simKey].DiN1 = float(row[28])
+                myCells[simKey].P_N1 = float(row[29])
+                myCells[simKey].P_N20 = float(row[30])
+                myCells[simKey].P_N2i = float(row[31])
+                myCells[simKey].P_N2m = float(row[32])
+                #myCells[simKey].labelRefNb = row[33]
+                #myCells[simKey].label = row[34]
+            
+                if myCells[simKey].simulation_NB != simKey:
+                    print("Warning: Error loading file")
+            line_count = line_count + 1
         return my_subplot_titles, myCells
 
 ##############################################################
