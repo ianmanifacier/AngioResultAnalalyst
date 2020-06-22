@@ -47,10 +47,26 @@ class CellSimulationResult:
         self.matureN1TransitionPeriod_mean = float() #28
         self.nbSteps = 0
         self.nbExtremities = "not defined"
-    def distance(self):
+    def distanceFromOrigin(self):
         x = self.x
         y = self.y
         return sqrt( (x[0]-x[self.nbSteps])**2 + (y[0]-y[self.nbSteps])**2 )
+    def curvedDistanceFromOrigin(self):
+        x = self.x
+        y = self.y
+        curved_distance = 0.0
+        for i in range(0,self.nbSteps):
+            curved_distance = curved_distance + sqrt( (x[i]-x[i+1])**2 + (y[i]-y[i+1])**2 )
+        return curved_distance
+    def tortuosity(self):
+        """Tortuosity
+        source : https://en.wikipedia.org/wiki/Tortuosity
+        The simplest mathematical method to estimate tortuosity is the arc-chord ratio: the ratio of the length of the curve (C) to the distance between its ends (L):
+        # arc-chord ratio: tau =C/L
+        Arc-chord ratio equals 1 for a straight line and is infinite for a circle."""
+        if self.distanceFromOrigin() == 0.0:
+            return 0
+        return self.curvedDistanceFromOrigin() / self.distanceFromOrigin()
     def nextStep(self):
         self.nbSteps += 1
     def calculatesMigrationAngles(self):
@@ -136,7 +152,10 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
         for row in csv_reader:
-            if line_count > 0:
+            if line_count ==0:
+                print("list parameters = ", row)
+                parameter_list = row[3:33]
+            else:
                 simKey = int(row[2])
                 myCells[simKey].duration = float(row[0])
                 myCells[simKey].dt = float(row[1])
@@ -166,18 +185,19 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
                 myCells[simKey].ruptureForce_N0 = float(row[25])
                 myCells[simKey].ruptureForce_N1 = float(row[26])
                 myCells[simKey].ruptureForce_N2 = float(row[27])
-                myCells[simKey].DiN1 = float(row[28])
-                myCells[simKey].P_N1 = float(row[29])
-                myCells[simKey].P_N20 = float(row[30])
-                myCells[simKey].P_N2i = float(row[31])
-                myCells[simKey].P_N2m = float(row[32])
-                #myCells[simKey].labelRefNb = row[33]
-                #myCells[simKey].label = row[34]
+                myCells[simKey].P_N1 = float(row[28])
+                myCells[simKey].P_N20 = float(row[29])
+                myCells[simKey].P_N2i = float(row[30])
+                myCells[simKey].P_N2m = float(row[31])
+                #myCells[simKey].labelRefNb = row[32]
+                #myCells[simKey].label = row[33]
+                myCells[simKey].label_x = row[34]
+                myCells[simKey].label_y = row[35]
             
                 if myCells[simKey].simulation_NB != simKey:
                     print("Warning: Error loading file")
             line_count = line_count + 1
-        return my_subplot_titles, myCells
+        return parameter_list, my_subplot_titles, myCells
 
 ##############################################################
 ################# Ploting tools ##############################
