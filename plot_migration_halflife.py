@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 import os
+import scipy.stats
 
 # local library imports
 from result_reader import plotmigrationpatterns as myplt
@@ -907,6 +908,20 @@ def mycolorscaleSimplified(correlation_threshold = 0.5):
             cs.append([float(i), "rgb(0,0,0)"])
     return cs
 
+def mycolorscale_P_values():
+    cs = list()
+    for i in np.linspace(0, 1, num=201):
+        if float(i) < (1-0.997):
+            cs.append([float(i), "rgb(0,255,0)"])
+        elif float(i) <(1-0.95):
+            cs.append([float(i), "rgb(0,100,0)"])
+        elif float(i) <(1-0.68):
+            cs.append([float(i), "rgb(19,149,131)"])
+        else:
+            cs.append([float(i), "rgb(0,0,0)"])
+        #print("cs =" + str(cs) )
+    return cs
+
 
 
 input_parameters_list =    ["DN1i","DN1m","DN2",
@@ -929,42 +944,85 @@ multiCellTA = MultiCellTrajectoryAnalysis(myCells, input_parameters_list)
 #print("y= ",multiCellTA.append("tortuosity",1,10))
 
 correlation_matrix = "empty" #np.empty([0,len(multiCellTA.parameters_path_analysis_keys_list)], dtype=float)
-
+p_value_matrix = "empty"
 for p in multiCellTA.labelRefNb_list:
     z_row = np.empty([1,0], dtype=float)
+    p_value_row = np.empty([1,0], dtype=float)
     for q in multiCellTA.parameters_path_analysis_keys_list:
-        z_xy = np.corrcoef(x=multiCellTA[p],y=multiCellTA[q][p])[0,1]
+        pearson_xy = scipy.stats.pearsonr(x=multiCellTA[p],y=multiCellTA[q][p])
+        #z_xy = np.corrcoef(x=multiCellTA[p],y=multiCellTA[q][p])[0,1]
         #print(z_xy)
+        #print("pearson_xy =", pearson_xy)
+        z_xy = pearson_xy[0]
+        p_value_xy = pearson_xy[1]
         z_row = np.append(z_row, [z_xy])
+        p_value_row = np.append(p_value_row, [p_value_xy])
     if correlation_matrix == "empty":
         correlation_matrix = [z_row]
+        p_value_matrix = [p_value_row]
     else:
-        correlation_matrix = np.append(correlation_matrix,[z_row], axis=0) 
+        correlation_matrix = np.append(correlation_matrix,[z_row], axis=0)
+        p_value_matrix = np.append(p_value_matrix, [p_value_row], axis=0)
 
 """
 z_xy = np.corrcoef(x=multiCellTA.append("R0_1i",1,10),y=multiCellTA.append("tortuosity",1,10))[0,1]
 z_row = np.append(z_row, [z_xy])
 """
 
-#correlation_matrix =  z_row #np.random.rand(1, len(mesurement_list))
 
 print("shape row = ", z_row.shape)
-
-#np.reshape(correlation_matrix, [len(multiCellTA.labelRefNb_list),5])
 print("shape correlation_matrix = ", correlation_matrix.shape)
 
-fig = go.Figure(data=go.Heatmap(
-        z=correlation_matrix,#z_row,
+
+""" Drawing CORRELATION figure"""
+fig_correlation = go.Figure(
+        data=go.Heatmap(
+        z=correlation_matrix,
         x=mesurement_list,
         y=multiCellTA.labelRefNb_list,
         zmin=-1,
         zmax=1,
         colorscale=mycolorscale())) #'Viridis'))
-
-fig.update_layout(
+fig_correlation.update_layout(
     title='Correlation heat map')
+fig_correlation.show()
 
-fig.show()
 
+""" Drawing P-VALUE figure"""
+fig_p_value = go.Figure(
+        data=go.Heatmap(
+        z=p_value_matrix,
+        x=mesurement_list,
+        y=multiCellTA.labelRefNb_list,
+        zmin=0,
+        zmax=1,
+        colorscale=mycolorscale_P_values()))
+
+fig_p_value.update_layout(
+    title='P-value heat map')
+
+fig_p_value.show()
+
+p_value_threshold = 0.05 # 5% chance that the result may be due to chance (the higher this value the more we accept error due to noise)
+correlation_threshold = 0.5 # R²>=0.5
+
+z_PearsonConclusion_matrix = correlation_matrix * (correlation_matrix > correlation_threshold) * (p_value_matrix < p_value_threshold) + correlation_matrix * (correlation_matrix < -correlation_threshold) * (p_value_matrix < p_value_threshold)
+
+
+
+""" Drawing Pearson Conclusion figure"""
+fig_PearsonConclusion = go.Figure(
+        data=go.Heatmap(
+        z= z_PearsonConclusion_matrix,
+        x=mesurement_list,
+        y=multiCellTA.labelRefNb_list,
+        zmin=-1,
+        zmax=1,
+        colorscale=mycolorscaleSimplified()))
+
+fig_PearsonConclusion.update_layout(
+    title='Pearson CONCLUSION heat map')
+
+fig_PearsonConclusion.show()
 
 
