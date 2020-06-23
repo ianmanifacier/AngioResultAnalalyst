@@ -785,11 +785,9 @@ if showGraph:
 mesurement_list = ("distance of travel", "distance from origin", "tortuosity", "average curved speed","average speed (straight line)")
 
 class MultiCellTrajectoryAnalysis(dict):
-    def __init__(self, myCells):
+    def __init__(self, myCells, ipls):
         self.labelRefNb_list = list()
-        self.parameter_keys_list =list()
-        # parameters related (initialization dictionnary)
-        self.R0_1i_array = dict()
+        self.parameters_path_analysis_keys_list =list()
         # path results (initialization dictionnary)
         self.curved_length = dict() 
         self.distance_from_origin = dict() 
@@ -797,11 +795,30 @@ class MultiCellTrajectoryAnalysis(dict):
         self.curved_speed = dict()
         self.speed = dict()
         
+        i_count = 0
+        index_ipls = 0
+
         for cell in myCells:
-            labelRefNb = myCells[cell].labelRefNb
+            if cell == 1:
+                myCells[cell].label = ipls[index_ipls]
+            elif i_count >= 100:
+                index_ipls = index_ipls + 1
+                i_count = 0
+                myCells[cell].label = ipls[index_ipls]
+            else:
+                myCells[cell].label = ipls[index_ipls]
+            
+            i_count = i_count + 1
+            
+
+            labelRefNb = myCells[cell].label #myCells[cell].labelRefNb
             if labelRefNb not in self.curved_length.keys():
                 # parameters related (initialization dictionnary key)
-                self.R0_1i_array[labelRefNb] =  np.array([myCells[cell].P_N1 * myCells[cell].DN1i], dtype=float)
+                if labelRefNb == "l1":
+                    self[labelRefNb] =  np.array([getattr(myCells[cell],"l1min")], dtype=float)
+                    #self["l1max"] =  np.array([getattr(myCells[cell],"l1max")], dtype=float)
+                else:
+                    self[labelRefNb] =  np.array([getattr(myCells[cell],labelRefNb)], dtype=float)
                 # path results (initialization dictionnary key)
                 self.curved_length[labelRefNb] = np.array( [myCells[cell].curvedDistanceFromOrigin()], dtype=float)
                 self.distance_from_origin[labelRefNb] = np.array( [myCells[cell].distanceFromOrigin()], dtype=float)
@@ -810,7 +827,11 @@ class MultiCellTrajectoryAnalysis(dict):
                 self.speed[labelRefNb] = np.array( [myCells[cell].distanceFromOrigin()/(myCells[cell].nbSteps*myCells[cell].dt)], dtype=float)
             else:
                 # parameters related (append)
-                self.R0_1i_array[labelRefNb] = np.append( self.R0_1i_array[labelRefNb], myCells[cell].P_N1 * myCells[cell].DN1i )
+                if labelRefNb == "l1":
+                    self[labelRefNb] = np.append( self[labelRefNb], [getattr(myCells[cell],"l1min")])
+                    #self["l1max"] = np.append( self["l1max"], [getattr(myCells[cell],"l1max")])
+                else:
+                    self[labelRefNb] = np.append( self[labelRefNb], [getattr(myCells[cell],labelRefNb)])
                 # path results (append)
                 self.curved_length[labelRefNb] = np.append(self.curved_length[labelRefNb], [myCells[cell].curvedDistanceFromOrigin()])
                 self.distance_from_origin[labelRefNb] = np.append(self.distance_from_origin[labelRefNb], [myCells[cell].distanceFromOrigin()])
@@ -819,20 +840,50 @@ class MultiCellTrajectoryAnalysis(dict):
                 self.speed[labelRefNb] = np.append(self.speed[labelRefNb], [myCells[cell].distanceFromOrigin()/(myCells[cell].nbSteps*myCells[cell].dt)])
         #print("Mean values ::   curved length = ",self.curved_length.mean(), ";  distance_from_origin = ", self.distance_from_origin.mean(),";  tortuosity = ", self.tortuosity.mean())
         #print("curved_length.shape = ", self.curved_length.shape)
-        self["R0_1i"] = self.R0_1i_array
         # parameters value
         self["curved_length"] = self.curved_length
         self["distance_from_origin"] = self.distance_from_origin
         self["tortuosity"] = self.tortuosity
         self["curved_speed"] = self.curved_speed
         self["speed"] = self.speed
-        self.parameter_keys_list = ["curved_length","distance_from_origin","tortuosity","curved_speed","speed"]
+        self.parameters_path_analysis_keys_list = ["curved_length","distance_from_origin","tortuosity","curved_speed","speed"]
         self.labelRefNb_list = list(self.curved_length.keys())
-    def append(self, key, first_labelRfnb, last_labelRfnb):
+        if self.labelRefNb_list == ipls:
+            print("OK")
+        else:
+            print("input parameter lists do not match")
+            print(ipls)
+            print(self.labelRefNb_list)
+    def appendByLabelRefnb(self, key, first_labelRfnb, last_labelRfnb):
         my_array = self[key][first_labelRfnb]
         for i in range(first_labelRfnb+1, last_labelRfnb+1):
             my_array = np.append(my_array, self[key][i])
         return my_array
+
+
+"""
+print("len ipls = ", len(ipls))
+
+simNbs = range(1,2301)
+
+i_count = 0
+index_ipls = 0
+categories = dict()
+for i in simNbs:
+    if i == 1:
+        categories[ipls[index_ipls]]= [i]
+    elif i_count >= 100:
+        index_ipls = index_ipls + 1
+        i_count = 0
+        categories[ipls[index_ipls]] = [i]
+    else:
+        categories[ipls[index_ipls]].append(i)
+    i_count = i_count + 1
+
+print(categories)
+"""
+
+
 
 def mycolorscale():
     cs = list()
@@ -841,7 +892,7 @@ def mycolorscale():
             cs.append([float(i), "rgb(" + str(255*(0.5-i)/0.5) + ",0,0)"])
         elif float(i) >0.5:
             cs.append([float(i), "rgb(0," + str(255*(i-0.5)/0.5)+ ",0)"])
-            print("cs =" + str(cs) )
+            #print("cs =" + str(cs) )
     return cs
 
 def mycolorscaleSimplified(correlation_threshold = 0.5):
@@ -851,44 +902,61 @@ def mycolorscaleSimplified(correlation_threshold = 0.5):
             cs.append([float(i), "rgb(" + str(255*(0.5-i)/0.5) + ",0,0)"])
         elif float(i) > (0.5+0.5*correlation_threshold):
             cs.append([float(i), "rgb(0," + str(255*(i-0.5)/0.5)+ ",0)"])
-            print("cs =" + str(cs) )
+            #print("cs =" + str(cs) )
         else:
             cs.append([float(i), "rgb(0,0,0)"])
     return cs
 
 
 
-multiCellTA = MultiCellTrajectoryAnalysis(myCells)
-print("curved_length mean : ", multiCellTA["curved_length"][1].mean())
+input_parameters_list =    ["DN1i","DN1m","DN2",
+                            "l1","l2","l2eq",
+                            "P_N1","P_N20","P_N2i","P_N2m",
+                            "k10","k1","k2",
+                            "gamma1","delta",
+                            "alpha0","alpha10",
+                            "alpha1i_slope_coefficient","alphasat",
+                            "alpha1m","alpha2",
+                            "ruptureForce_N1","ruptureForce_N2"]
 
-z = np.random.uniform(-1,1,size=(len(parameter_list), len(mesurement_list)))
 
-labelRefNb_list = multiCellTA.labelRefNb_list
-labelRefNb_ij = labelRefNb_list[0]
+multiCellTA = MultiCellTrajectoryAnalysis(myCells, input_parameters_list)
+#print("curved_length mean : ", multiCellTA["curved_length"]["P_N1"].mean())
+
+#z = np.random.uniform(-1,1,size=(len(parameter_list), len(mesurement_list)))
+
 #print("x= ", multiCellTA.append("R0_1i",1,10))
 #print("y= ",multiCellTA.append("tortuosity",1,10))
 
-z_row = np.empty([1,0], dtype=float)
-for p in multiCellTA.parameter_keys_list:
-    z_xy = np.corrcoef(x=multiCellTA.append("R0_1i",1,10),y=multiCellTA.append(p,1,10))[0,1]
-    print(z_xy)
-    z_row = np.append(z_row, [z_xy])
-z_row = np.reshape(z_row, [1, len(z_row)])
+correlation_matrix = "empty" #np.empty([0,len(multiCellTA.parameters_path_analysis_keys_list)], dtype=float)
+
+for p in multiCellTA.labelRefNb_list:
+    z_row = np.empty([1,0], dtype=float)
+    for q in multiCellTA.parameters_path_analysis_keys_list:
+        z_xy = np.corrcoef(x=multiCellTA[p],y=multiCellTA[q][p])[0,1]
+        #print(z_xy)
+        z_row = np.append(z_row, [z_xy])
+    if correlation_matrix == "empty":
+        correlation_matrix = [z_row]
+    else:
+        correlation_matrix = np.append(correlation_matrix,[z_row], axis=0) 
 
 """
 z_xy = np.corrcoef(x=multiCellTA.append("R0_1i",1,10),y=multiCellTA.append("tortuosity",1,10))[0,1]
 z_row = np.append(z_row, [z_xy])
 """
 
-correlation_matrix =  z_row #np.random.rand(1, len(mesurement_list))
+#correlation_matrix =  z_row #np.random.rand(1, len(mesurement_list))
 
-print("shape =", z_row.shape)
+print("shape row = ", z_row.shape)
 
-print(z_row)
+#np.reshape(correlation_matrix, [len(multiCellTA.labelRefNb_list),5])
+print("shape correlation_matrix = ", correlation_matrix.shape)
+
 fig = go.Figure(data=go.Heatmap(
         z=correlation_matrix,#z_row,
         x=mesurement_list,
-        y=("R0_1i", "coucou"), #parameter_list,
+        y=multiCellTA.labelRefNb_list,
         zmin=-1,
         zmax=1,
         colorscale=mycolorscale())) #'Viridis'))
