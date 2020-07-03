@@ -13,6 +13,9 @@ import scipy.stats
 from plot_tools_and_loader import *
 
 
+pearson_correlation = True
+rank_correlatation = True
+
 #https://realpython.com/numpy-scipy-pandas-correlation-python/
 
 mesurement_list = ("distance of travel", "distance from origin", "tortuosity", "average curved speed","average speed (straight line)")
@@ -132,7 +135,7 @@ def mycolorscale_P_values():
 
 
 input_parameters_list =    ["DN1i","DN1m","DN2",
-                            "l1","l2","l2eq",
+                            "l1","l2","l2presstress",
                             "P_N1","P_N20","P_N2i","P_N2m",
                             "k10","k1","k2",
                             "gamma1","delta",
@@ -160,8 +163,12 @@ for p in multiCellTA.labelRefNb_list:
         #z_xy = np.corrcoef(x=multiCellTA[p],y=multiCellTA[q][p])[0,1]
         #print(z_xy)
         #print("pearson_xy =", pearson_xy)
-        z_xy = pearson_xy[0] # correlation value
-        p_value_xy = pearson_xy[1] # p-value
+        if pearson_correlation:
+            z_xy = pearson_xy[0] # correlation value
+            p_value_xy = pearson_xy[1] # p-value
+        elif rank_correlatation:
+            z_xy = pearson_xy[0] # correlation value
+            p_value_xy = pearson_xy[1] # p-value
         z_row = np.append(z_row, [z_xy])
         p_value_row = np.append(p_value_row, [p_value_xy])
     if correlation_matrix == "empty":
