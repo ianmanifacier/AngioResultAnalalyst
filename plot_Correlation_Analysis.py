@@ -153,104 +153,105 @@ multiCellTA = MultiCellTrajectoryAnalysis(myCells, input_parameters_list)
 #print("x= ", multiCellTA.append("R0_1i",1,10))
 #print("y= ",multiCellTA.append("tortuosity",1,10))
 
-correlation_matrix = "empty" #np.empty([0,len(multiCellTA.parameters_path_analysis_keys_list)], dtype=float)
-p_value_matrix = "empty"
-for p in multiCellTA.labelRefNb_list:
-    z_row = np.empty([1,0], dtype=float)
-    p_value_row = np.empty([1,0], dtype=float)
-    for q in multiCellTA.parameters_path_analysis_keys_list:
-        pearson_xy = scipy.stats.pearsonr(x=multiCellTA[p],y=multiCellTA[q][p])
-        #z_xy = np.corrcoef(x=multiCellTA[p],y=multiCellTA[q][p])[0,1]
-        #print(z_xy)
-        #print("pearson_xy =", pearson_xy)
-        if pearson_correlation:
-            z_xy = pearson_xy[0] # correlation value
-            p_value_xy = pearson_xy[1] # p-value
-        elif rank_correlatation:
-            z_xy = pearson_xy[0] # correlation value
-            p_value_xy = pearson_xy[1] # p-value
-        z_row = np.append(z_row, [z_xy])
-        p_value_row = np.append(p_value_row, [p_value_xy])
-    if correlation_matrix == "empty":
-        correlation_matrix = [z_row]
-        p_value_matrix = [p_value_row]
-    else:
-        correlation_matrix = np.append(correlation_matrix,[z_row], axis=0)
-        p_value_matrix = np.append(p_value_matrix, [p_value_row], axis=0)
+if False:
+    correlation_matrix = "empty" #np.empty([0,len(multiCellTA.parameters_path_analysis_keys_list)], dtype=float)
+    p_value_matrix = "empty"
+    for p in multiCellTA.labelRefNb_list:
+        z_row = np.empty([1,0], dtype=float)
+        p_value_row = np.empty([1,0], dtype=float)
+        for q in multiCellTA.parameters_path_analysis_keys_list:
+            pearson_xy = scipy.stats.pearsonr(x=multiCellTA[p],y=multiCellTA[q][p])
+            #z_xy = np.corrcoef(x=multiCellTA[p],y=multiCellTA[q][p])[0,1]
+            #print(z_xy)
+            #print("pearson_xy =", pearson_xy)
+            if pearson_correlation:
+                z_xy = pearson_xy[0] # correlation value
+                p_value_xy = pearson_xy[1] # p-value
+            elif rank_correlatation:
+                z_xy = pearson_xy[0] # correlation value
+                p_value_xy = pearson_xy[1] # p-value
+            z_row = np.append(z_row, [z_xy])
+            p_value_row = np.append(p_value_row, [p_value_xy])
+        if correlation_matrix == "empty":
+            correlation_matrix = [z_row]
+            p_value_matrix = [p_value_row]
+        else:
+            correlation_matrix = np.append(correlation_matrix,[z_row], axis=0)
+            p_value_matrix = np.append(p_value_matrix, [p_value_row], axis=0)
 
-"""
-z_xy = np.corrcoef(x=multiCellTA.append("R0_1i",1,10),y=multiCellTA.append("tortuosity",1,10))[0,1]
-z_row = np.append(z_row, [z_xy])
-"""
-
-
-print("shape row = ", z_row.shape)
-print("shape correlation_matrix = ", correlation_matrix.shape)
+    """
+    z_xy = np.corrcoef(x=multiCellTA.append("R0_1i",1,10),y=multiCellTA.append("tortuosity",1,10))[0,1]
+    z_row = np.append(z_row, [z_xy])
+    """
 
 
-""" Drawing CORRELATION figure"""
-fig_correlation = go.Figure(
-        data=go.Heatmap(
-        z=correlation_matrix,
-        x=mesurement_list,
-        y=multiCellTA.labelRefNb_list,
-        xgap=0.1,
-        ygap=0.1,
-        zmin=-1,
-        zmax=1,
-        colorscale=mycolorscale()))
-fig_correlation.update_layout(
-    title='Correlation heat map',
-    font=font_dict, # font properties
-    height=3 * fig_pixel_definition, # height of the plot
-    width=4 * fig_pixel_definition,) # width of the plot
-fig_correlation.show()
+    print("shape row = ", z_row.shape)
+    print("shape correlation_matrix = ", correlation_matrix.shape)
 
 
-""" Drawing P-VALUE figure"""
-fig_p_value = go.Figure(
-        data=go.Heatmap(
-        z=p_value_matrix,
-        x=mesurement_list,
-        y=multiCellTA.labelRefNb_list,
-        xgap=0.2,
-        ygap=0.2,
-        zmin=0,
-        zmax=1,
-        colorscale=mycolorscale_P_values()))
-
-fig_p_value.update_layout(
-    title='P-value heat map',
-    font=font_dict, # font properties
-    height=3 * fig_pixel_definition, # height of the plot
-    width=4 * fig_pixel_definition,) # width of the plot
-
-fig_p_value.show()
-
-p_value_threshold = 0.05 # 5% chance that the result may be due to chance (the higher this value the more we accept error due to noise)
-correlation_threshold = 0.5 # R²>=0.5
-
-z_PearsonConclusion_matrix = correlation_matrix * ( ((correlation_matrix > correlation_threshold) + (correlation_matrix < -correlation_threshold)) * (p_value_matrix < p_value_threshold) )
+    """ Drawing CORRELATION figure"""
+    fig_correlation = go.Figure(
+            data=go.Heatmap(
+            z=correlation_matrix,
+            x=mesurement_list,
+            y=multiCellTA.labelRefNb_list,
+            xgap=0.1,
+            ygap=0.1,
+            zmin=-1,
+            zmax=1,
+            colorscale=mycolorscale()))
+    fig_correlation.update_layout(
+        title='Correlation heat map',
+        font=font_dict, # font properties
+        height=3 * fig_pixel_definition, # height of the plot
+        width=4 * fig_pixel_definition,) # width of the plot
+    fig_correlation.show()
 
 
-""" Drawing Pearson Conclusion figure"""
-fig_PearsonConclusion = go.Figure(
-        data=go.Heatmap(
-        z= z_PearsonConclusion_matrix,
-        x=mesurement_list,
-        y=multiCellTA.labelRefNb_list,
-        xgap=0.1,
-        ygap=0.1,
-        zmin=-1,
-        zmax=1,
-        colorscale=mycolorscaleSimplified()))
+    """ Drawing P-VALUE figure"""
+    fig_p_value = go.Figure(
+            data=go.Heatmap(
+            z=p_value_matrix,
+            x=mesurement_list,
+            y=multiCellTA.labelRefNb_list,
+            xgap=0.2,
+            ygap=0.2,
+            zmin=0,
+            zmax=1,
+            colorscale=mycolorscale_P_values()))
 
-fig_PearsonConclusion.update_layout(
-    title='Pearson CONCLUSION heat map',
-    font=font_dict, # font properties
-    height=3 * fig_pixel_definition, # height of the plot
-    width=4 * fig_pixel_definition,) # width of the plot
+    fig_p_value.update_layout(
+        title='P-value heat map',
+        font=font_dict, # font properties
+        height=3 * fig_pixel_definition, # height of the plot
+        width=4 * fig_pixel_definition,) # width of the plot
 
-fig_PearsonConclusion.show()
+    fig_p_value.show()
+
+    p_value_threshold = 0.05 # 5% chance that the result may be due to chance (the higher this value the more we accept error due to noise)
+    correlation_threshold = 0.5 # R²>=0.5
+
+    z_PearsonConclusion_matrix = correlation_matrix * ( ((correlation_matrix > correlation_threshold) + (correlation_matrix < -correlation_threshold)) * (p_value_matrix < p_value_threshold) )
+
+
+    """ Drawing Pearson Conclusion figure"""
+    fig_PearsonConclusion = go.Figure(
+            data=go.Heatmap(
+            z= z_PearsonConclusion_matrix,
+            x=mesurement_list,
+            y=multiCellTA.labelRefNb_list,
+            xgap=0.1,
+            ygap=0.1,
+            zmin=-1,
+            zmax=1,
+            colorscale=mycolorscaleSimplified()))
+
+    fig_PearsonConclusion.update_layout(
+        title='Pearson CONCLUSION heat map',
+        font=font_dict, # font properties
+        height=3 * fig_pixel_definition, # height of the plot
+        width=4 * fig_pixel_definition,) # width of the plot
+
+    fig_PearsonConclusion.show()
 
 
