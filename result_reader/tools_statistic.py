@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 import numpy as np
@@ -105,7 +104,7 @@ def AndersonDarlingNormalityTest(data, alpha=0.05, details=False):
     return dataLooksNormal
 
 
-def isThisDistributionNormal(data, alpha=0.05, details=False):
+def isThisDistributionNormal(data, alpha=0.05, details=False, quiet=False):
     """ This function performs a normality on the distribution, in other words, it
     test to see if the distribution is normal (Gaussian).
     source : https://machinelearningmastery.com/a-gentle-introduction-to-normality-tests-in-python/
@@ -119,6 +118,8 @@ def isThisDistributionNormal(data, alpha=0.05, details=False):
         data and quantify how likely it is that the data was drawn from a Gaussian distribution.
     Methods of this type are often called normality tests.
     """
+    if quiet:
+        details = False
     passShapiroWilkTest = ShapiroWilkTestOfNormality(data, alpha=alpha, details=details)
     passAgostinoK2Test = AgostinoTestOfNormality(data, alpha=alpha, details=details)
     passAndersonDarlingTest = AndersonDarlingNormalityTest(data, alpha=alpha, details=details)
@@ -126,10 +127,14 @@ def isThisDistributionNormal(data, alpha=0.05, details=False):
 
     if Gaussian:
         """ We use Parametric Statistical Methods:  """
-        print("data is/looks Gaussian (no hard fail)")
+        if not quiet:
+            print("data is/looks Gaussian (no hard fail)")
+        return True
     else:
         """ Use Nonparametric Statistical Methods """
-        print("Data is non Gaussian")
+        if not quiet:
+            print("Data is non Gaussian")
+        return False
 
 
 

@@ -52,7 +52,13 @@ class CellSimulationResult:
     def distanceFromOrigin(self):
         x = self.x
         y = self.y
-        return sqrt( (x[0]-x[self.nbSteps])**2 + (y[0]-y[self.nbSteps])**2 )
+        return sqrt( (x[self.nbSteps]-x[0])**2 + (y[self.nbSteps]-y[0])**2 )
+    def distanceFromOrigin_x(self):
+        x = self.x
+        return x[0]-x[self.nbSteps]
+    def distanceFromOrigin_y(self):
+        y = self.y
+        return y[0]-y[self.nbSteps]
     def curvedDistanceFromOrigin(self):
         x = self.x
         y = self.y
@@ -80,6 +86,21 @@ class CellSimulationResult:
             vy = self.y[i+1]-self.y[i]
             theta[i-1] = acos( (ux*vx +uy*uy)/( sqrt( (ux*ux+uy*uy) + (vx*vx+vy*vy) ) ))
         return theta
+    def calulateDistancePerStep(self):
+        x = self.x
+        y = self.y
+        ux = x[1:len(x)]-x[0:len(x)-1]
+        uy = y[1:len(y)]-y[0:len(y)-1]
+        return np.power( ux*ux + uy*uy , .5)
+    def calulateDistancePerStep_x(self):
+        x = self.x
+        ux = x[1:len(x)]-x[0:len(x)-1]
+        return ux
+    def calulateDistancePerStep_y(self):
+        y = self.y
+        uy = y[1:len(y)]-y[0:len(y)-1]
+        return uy
+
 
 
 class ParameterRanges(dict):
@@ -117,7 +138,7 @@ def historgram(x):
     fig = ff.create_distplot(hist_data, group_labels, bin_size=1)
     fig.show()
 
-def historgramFromFist(data_list, data_labels):
+def historgramFromList(data_list, data_labels):
     """ histogram(x) makes a histogram
     x is a numpy array width 1 and length n """
     hist_data = data_list
@@ -182,6 +203,9 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
             line_count += 1
         my_subplot_titles = tuple(my_subplot_titles)
     print('Up load Parameters')
+    # Calculate l1_mean
+    for simKey in myCells:
+        myCells[simKey].l1_mean = np.mean(myCells[simKey].calculateTheLengthOfAllB1s) / np.mean(myCells[simKey].countN1s)
     with open(filename2) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         line_count = 0
@@ -206,14 +230,15 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
                 myCells[simKey].l1min = float(row[6])
                 myCells[simKey].l1max = float(row[7])
                 myCells[simKey].l2 = float(row[8])
-                myCells[simKey].l2eq = float(row[9])
+                myCells[simKey].l2eq = float(row[9]) ######
+                myCells[simKey].l2_prestress = float(row[9]) #######
                 myCells[simKey].k10 = float(row[10])
                 myCells[simKey].k1 = float(row[11])
                 myCells[simKey].k2 = float(row[12])
                 myCells[simKey].gamma1 = float(row[13])
                 myCells[simKey].B1_tension_only = bool(row[14])
                 myCells[simKey].B2_tension_only = bool(row[15])
-                myCells[simKey].B1_stretch_maturation_theshold = float(row[16])
+                myCells[simKey].B1_stretch_maturation_threshold = float(row[16])
                 myCells[simKey].alphasat = float(row[17])
                 myCells[simKey].alpha0 = float(row[18])
                 myCells[simKey].alpha10 = float(row[19])

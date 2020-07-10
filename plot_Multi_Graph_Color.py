@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 # external library imports
@@ -11,7 +10,17 @@ import random
 
 # local library imports
 #from result_reader import plotmigrationpatterns as myplt
-from plot_tools_and_loader import *
+
+
+from plot_tools_and_loader import nb_cols
+from plot_tools_and_loader import fig_pixel_definition
+from plot_tools_and_loader import limxy
+from plot_tools_and_loader import get_row_col_nb
+from plot_tools_and_loader import getNb_rows_cols
+from plot_tools_and_loader import loadData
+
+parameter_ranges, parameter_list, my_subplot_titles, myCells, multiCellTA = loadData()
+nb_rows, nb_cols = getNb_rows_cols(my_subplot_titles, nb_cols)
 
 showGraph = True
 
