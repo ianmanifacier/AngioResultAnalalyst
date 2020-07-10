@@ -163,7 +163,6 @@ if False:
     fig_hist_1.show()
 
 
-
 """ Distribution X and Y values """
 if False:
     fig_hist_2 = make_subplots(rows=nb_rows, cols=nb_cols, subplot_titles=multiCellTA.label_detailed_list)

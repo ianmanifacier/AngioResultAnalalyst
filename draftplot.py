@@ -11,48 +11,15 @@
 # source: https://towardsdatascience.com/least-squares-linear-regression-in-python-54b87fc49e77
 # py -i draftplot.py (to keep script open)
 
-from matplotlib import pyplot as plt
+import plotly.graph_objects as go
 import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.datasets import make_regression
-X, y, coefficients = make_regression(
-    n_samples=50,
-    n_features=1,
-    n_informative=1,
-    n_targets=1,
-    noise=5,
-    coef=True,
-    random_state=1
-)
-print(X.shape)
-n = X.shape[1]
-r = np.linalg.matrix_rank(X)
+np.random.seed(44)
 
-U, sigma, VT = np.linalg.svd(X, full_matrices=False)
-D_plus = np.diag(np.hstack([1/sigma[:r], np.zeros(n-r)]))
-V = VT.T
+y0 = np.random.randn(50) - 1
+y1 = np.random.randn(50) + 1
 
-X_plus = V.dot(D_plus).dot(U.T)
-w = X_plus.dot(y)
+fig = go.Figure()
+fig.add_trace(go.Box(y=y0))
+fig.add_trace(go.Box(y=y1))
 
-error = np.linalg.norm(X.dot(w) - y, ord=2) ** 2
-print("error: ", error)
-
-np.linalg.lstsq(X, y, rcond=None)
-
-# plt.scatter(X, y, c='b')
-# plt.plot(X, w*X, c='g')
-
-lr = LinearRegression()
-lr.fit(X, y)
-w = lr.coef_[0]
-x_slope = X
-y_slope = w*X
-
-plt.scatter(X, y)
-plt.plot(X, w*X, c='red')
-plt.show()
-
-
-
-
+fig.show()
