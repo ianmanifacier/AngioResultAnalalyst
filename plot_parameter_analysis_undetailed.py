@@ -38,7 +38,7 @@ print(my_subplot_titles)
 
 mesurement_list = ("distance of travel", "distance from origin", "tortuosity", "average curved speed","average speed (straight line)")
 for title_str in multiCellTA.parameters_path_analysis_keys_list:
-    fig1 = make_subplots(rows=nb_rows, cols=2, subplot_titles=multiCellTA.label_detailed_list)
+    fig1 = make_subplots(rows=nb_rows, cols=2)
     row_nb = 1
     for label in multiCellTA.get_label_list():
         x = multiCellTA[label]

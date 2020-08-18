@@ -164,7 +164,7 @@ if False:
 
 
 """ Distribution X and Y values """
-if False:
+if True:
     fig_hist_2 = make_subplots(rows=nb_rows, cols=nb_cols, subplot_titles=multiCellTA.label_detailed_list)
     for i in range(0,len(multiCellTA.label_detailed_list)):
         label = multiCellTA.label_detailed_list[i]
@@ -228,7 +228,7 @@ if False:
         p_value_xy = pearson_xy[1] # p-value
         z_row = np.append(z_row, [z_xy])
         p_value_row = np.append(p_value_row, [p_value_xy])
-
+        #
         if row_i>=nb_cols:
             if correlation_matrix == "empty":
                 correlation_matrix = [z_row]
@@ -317,7 +317,7 @@ if False:
 
 
 
-if False:
+if True:
     """ X AXIS:  Distribution analysis """
     normal_matrix_x = "empty"
     row_i = 0
@@ -472,8 +472,8 @@ if False:
                 y=multiCellTA.label_list,
                 xgap=0.1,
                 ygap=0.1,
-                zmin=-2,
-                zmax=2,
+                zmin=-1,
+                zmax=1,
                 colorscale=mycolorscale()))
     fig_correlation.update_layout(
         title='X AXIS:NORMALITY HEAT MAP of final position on x axis (green: normaly distributed, Red: not normaly distributed)',
@@ -521,8 +521,8 @@ if False:
                 y=multiCellTA.label_list,
                 xgap=0.1,
                 ygap=0.1,
-                zmin=-2,
-                zmax=2,
+                zmin=-1,
+                zmax=1,
                 colorscale=mycolorscale()))
     fig_correlation.update_layout(
         title='Y AXIS:NORMALITY HEAT MAP of final position on x axis (green: normaly distributed, Red: not normaly distributed)',
@@ -583,7 +583,7 @@ if False:
 
 
 """ Mean Square displacement over time (for each detailed label) """
-if True:
+if False:
     fig1 = make_subplots(rows=nb_rows, cols=nb_cols, subplot_titles=multiCellTA.label_detailed_list)
     for i in range(0,len(multiCellTA.label_detailed_list)):
         label = multiCellTA.label_detailed_list[i]
@@ -620,7 +620,7 @@ if True:
                 color="#7f7f7f")
         )
     fig1.update_xaxes(title="time in seconds", range=[0, 1.1*t[-1]])
-    fig1.update_yaxes(title="Mean Square Displacement")#, range=[0, 10])
+    fig1.update_yaxes(title="Mean Square Displacement", range=[0, 130])
     fig1.show()
 
 

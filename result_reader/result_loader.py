@@ -194,7 +194,7 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
             myCells[simKey].matureN1TransitionPeriod_minimum = float(row[26])#26
             myCells[simKey].matureN1TransitionPeriod_maximum = float(row[27])#27
             myCells[simKey].matureN1TransitionPeriod_mean = float(row[28])#28
-
+            #
             if myCells[simKey].labelRefNb not in labelRef_dict.keys():
                 labelRef_dict[myCells[simKey].labelRefNb] = myCells[simKey].label
                 my_subplot_titles.append(myCells[simKey].label)
@@ -227,48 +227,34 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
                 myCells[simKey].DN1i = float(row[3])
                 myCells[simKey].DN1m = float(row[4])
                 myCells[simKey].DN2 = float(row[5])
-                myCells[simKey].l1min = float(row[6])
-                myCells[simKey].l1max = float(row[7])
-                myCells[simKey].l2 = float(row[8])
-                myCells[simKey].l2eq = float(row[9]) ######
-                myCells[simKey].l2_prestress = float(row[9]) #######
-                myCells[simKey].k10 = float(row[10])
-                myCells[simKey].k1 = float(row[11])
-                myCells[simKey].k2 = float(row[12])
-                myCells[simKey].gamma1 = float(row[13])
-                myCells[simKey].B1_tension_only = bool(row[14])
-                myCells[simKey].B2_tension_only = bool(row[15])
-                myCells[simKey].B1_stretch_maturation_threshold = float(row[16])
+                myCells[simKey].l1 = float(row[6])
+                myCells[simKey].l2 = float(row[7])
+                myCells[simKey].l2_prestress = float(row[8]) #######
+                myCells[simKey].k10 = float(row[9])
+                myCells[simKey].k1 = float(row[10])
+                myCells[simKey].k2 = float(row[11])
+                myCells[simKey].gamma1 = float(row[12])
+                myCells[simKey].B1_tension_only = bool(row[13])
+                myCells[simKey].B2_tension_only = bool(row[14])
+                myCells[simKey].B1_stretch_maturation_threshold = float(row[15])
+                myCells[simKey].t_c = float(row[16])
                 myCells[simKey].alphasat = float(row[17])
                 myCells[simKey].alpha0 = float(row[18])
                 myCells[simKey].alpha10 = float(row[19])
-                myCells[simKey].alpha1i_constant_coefficient = float(row[20])
-                myCells[simKey].alpha1i_slope_coefficient = float(row[21])
-                myCells[simKey].alpha1m = float(row[22])
-                myCells[simKey].alpha2 = float(row[23])
-                myCells[simKey].delta = float(row[24])
-                myCells[simKey].ruptureForce_N0 = float(row[25])
-                myCells[simKey].ruptureForce_N1 = float(row[26])
-                myCells[simKey].ruptureForce_N2 = float(row[27])
-                myCells[simKey].P_N1 = float(row[28])
-                myCells[simKey].P_N20 = float(row[29])
-                myCells[simKey].P_N2i = float(row[30])
-                myCells[simKey].P_N2m = float(row[31])
-                #myCells[simKey].labelRefNb = row[32]
-                #myCells[simKey].label = row[33]
-                if len(row) > 35:
-                    myCells[simKey].label_x = row[34]
-                    myCells[simKey].label_y = row[35]
-                    try:
-                        parameter_ranges.add(myCells[simKey].label_x, getattr(myCells[simKey],myCells[simKey].label_x))
-                    except AttributeError:
-                        parameter_ranges.add(myCells[simKey].label_x, getattr(myCells[simKey],'l1min'))
-                else: # depricate
-                    try:
-                        parameter_ranges.add(myCells[simKey].label, getattr(myCells[simKey],myCells[simKey].label))
-                    except AttributeError:
-                        parameter_ranges.add(myCells[simKey].label, getattr(myCells[simKey],'l1min'))
-            
+                myCells[simKey].alpha1m = float(row[20])
+                myCells[simKey].alpha2 = float(row[21])
+                myCells[simKey].delta = float(row[22])
+                myCells[simKey].ruptureForce_N0 = float(row[23])
+                myCells[simKey].ruptureForce_N1 = float(row[24])
+                myCells[simKey].ruptureForce_N2 = float(row[25])
+                myCells[simKey].P_N1 = float(row[26])
+                myCells[simKey].P_N20 = float(row[27])
+                myCells[simKey].P_N2i = float(row[28])
+                myCells[simKey].P_N2m = float(row[29])
+                #myCells[simKey].labelRefNb = int(row[30])
+                #myCells[simKey].label = row[31]
+                myCells[simKey].label_x = row[32]
+                myCells[simKey].label_y = row[33]
                 if myCells[simKey].simulation_NB != simKey:
                     print("Warning: Error loading file")
             line_count = line_count + 1
