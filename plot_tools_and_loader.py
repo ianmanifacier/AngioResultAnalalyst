@@ -212,11 +212,6 @@ class MultiCellTrajectoryAnalysis(dict):
             label = myCells[cell].label
             label_detailed = label
             if use_detailed_label:
-                if label == "l1":
-                    label_detailed = "l1 = (" + str(getattr(myCells[cell],"l1min")) + "," + str(getattr(myCells[cell],"l1max")) + ")"
-                    if use_detailed_label:
-                        continue
-                else:
                     label_detailed = label + " = " + str(getattr(myCells[cell], label))
             #
             labelRefNb = myCells[cell].labelRefNb
