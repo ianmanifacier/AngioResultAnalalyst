@@ -125,9 +125,8 @@ def calculate_MultiCellTA_storeData(use_detailed_label=False):
                                 "l1","l2","l2_prestress",
                                 "P_N1","P_N20","P_N2i","P_N2m",
                                 "k10","k1","k2",
-                                "gamma1", 'B1_stretch_maturation_threshold', "delta",
-                                "alpha0","alpha10",
-                                "alpha1i_slope_coefficient","alphasat",
+                                "gamma1", "lambda1m", "delta", "theta2", "t_c",
+                                "alpha0","alpha10","alphasat",
                                 "alpha1m","alpha2",
                                 "ruptureForce_N1","ruptureForce_N2"]
     # define subplot titles
