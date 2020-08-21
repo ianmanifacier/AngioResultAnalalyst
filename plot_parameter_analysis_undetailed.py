@@ -58,7 +58,7 @@ for title_str in multiCellTA.parameters_path_analysis_keys_list:
             fig1.add_trace(go.Scatter(x=xm,y=y_005, fill='tonexty', mode= 'none', fillcolor='rgba(255, 218, 193, 1)'), row=row_nb, col=1)
             fig1.add_trace(go.Scatter(x=xm,y=y_075, fill='toself', mode= 'none', fillcolor='rgba(0, 0, 0, 0.0)'), row=row_nb, col=1)
             fig1.add_trace(go.Scatter(x=xm,y=y_025, fill='tonexty', mode= 'none', fillcolor='rgba(255, 154, 162, 1)'), row=row_nb, col=1)
-            fig1.add_trace(go.Scatter( x=x, y=y, mode='markers', marker=dict(color='rgba(255, 255, 255, 1)')), row=row_nb, col=1)
+            fig1.add_trace(go.Scatter(x=x, y=y, mode='markers', marker=dict(color='rgba(255, 255, 255, 1)')), row=row_nb, col=1)
             fig1.add_trace(go.Scatter(x=xm,y=y_mean, line_color='rgba(99, 110, 250, 1)'), row=row_nb, col=1)
             fig1.add_trace(go.Scatter(x=xm,y=y_std, line_color='rgba(99, 110, 250, 1)'), row=row_nb, col=2)
         else:
@@ -70,8 +70,6 @@ for title_str in multiCellTA.parameters_path_analysis_keys_list:
 
         print("row: ", row_nb)
         row_nb = row_nb + 1
-        
-
         # We format the figure
 
     fig1.update_layout(
