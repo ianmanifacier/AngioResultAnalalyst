@@ -236,7 +236,7 @@ def load_results(filename1 = 'results.csv', filename2 = 'parameters.csv'):
                 myCells[simKey].gamma1 = float(row[12])
                 myCells[simKey].B1_tension_only = bool(row[13])
                 myCells[simKey].B2_tension_only = bool(row[14])
-                myCells[simKey].B1_stretch_maturation_threshold = float(row[15])
+                myCells[simKey].lambda1m = float(row[15])
                 myCells[simKey].t_c = float(row[16])
                 myCells[simKey].alphasat = float(row[17])
                 myCells[simKey].alpha0 = float(row[18])
