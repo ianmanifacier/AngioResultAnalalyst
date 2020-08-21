@@ -236,14 +236,8 @@ class MultiCellTrajectoryAnalysis(dict):
                     self.label_detailed_list.append(label_detailed)
                 #
                 # parameters related (initialization dictionnary key)
-                if label == "l1":
-                    self[label_detailed] = np.array([getattr(myCells[cell],"l1_mean")], dtype=float)
-                    self["l1_min"] = np.array([getattr(myCells[cell],"l1min")], dtype=float)
-                    self["l1_max"] = np.array([getattr(myCells[cell],"l1max")], dtype=float)
-                    #self["l1max"] = np.array([getattr(myCells[cell],"l1max")], dtype=float)
-                else:
-                    #self[labelRefNb] =  np.array([getattr(myCells[cell],labelRefNb)], dtype=float)
-                    self[label_detailed] =  np.array([getattr(myCells[cell], label)], dtype=float)
+                #self[labelRefNb] =  np.array([getattr(myCells[cell],labelRefNb)], dtype=float)
+                self[label_detailed] =  np.array([getattr(myCells[cell], label)], dtype=float)
                 #print("label :", label)
                 print("detailed label :", label_detailed)
                 # path results (initialization dictionnary key)
@@ -263,13 +257,8 @@ class MultiCellTrajectoryAnalysis(dict):
                 self.distancePerStep_y[label_detailed] = myCells[cell].calulateDistancePerStep_y()
             else:
                 # parameters related (append)
-                if label == "l1":
-                    self[label_detailed] = np.append( self[label_detailed], [getattr(myCells[cell],"l1_mean")]) # making the values accessible using dictionnary properties
-                    self["l1_min"] = np.append( self[label_detailed], [getattr(myCells[cell],"l1min")]) # making the values accessible using dictionnary properties
-                    self["l1_max"] = np.append( self[label_detailed], [getattr(myCells[cell],"l1max")])
-                else:
-                    #self[labelRefNb] = np.append( self[labelRefNb], [getattr(myCells[cell],labelRefNb)]) # making the values accessible using dictionnary properties
-                    self[label_detailed] = np.append( self[label_detailed], [getattr(myCells[cell], label)]) # making the values accessible using dictionnary properties
+                #self[labelRefNb] = np.append( self[labelRefNb], [getattr(myCells[cell],labelRefNb)]) # making the values accessible using dictionnary properties
+                self[label_detailed] = np.append( self[label_detailed], [getattr(myCells[cell], label)]) # making the values accessible using dictionnary properties
                 # path results (append)
                 self.curved_length[label_detailed] = np.append(self.curved_length[label_detailed], [myCells[cell].curvedDistanceFromOrigin()])
                 self.distance_from_origin[label_detailed] = np.append(self.distance_from_origin[label_detailed], [myCells[cell].distanceFromOrigin()])
